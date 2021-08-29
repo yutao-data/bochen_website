@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+<title>View One Suggestion</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+
+{% block content %}
+
+<div class="demo-container mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+        </div>
+        <div style="display: grid; justify-items: center;">
+            <div class="mdl-card__supporting-text" style="display: grid; justify-items: center;">
+                <h3>The suggestion:</h3>
+
+
+                {% if suggestion.visible %}
+                {{ suggestion.commonUser.commonUserName }}:
+                <br>
+                Post time:{{ suggestion.postTime }}
+                <br>
+                Suggestion ID:{{ suggestion.suggestionID }}
+                <br>
+            </div>
+
+            
+            <p style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px;
+                box-shadow: 5px 5px rgb(0,0,0,20%);">{{ suggestion.content }}</p>
+
+
+            {% for i in suggestion_tags%}
+            <a href="{% url 'USFP:viewTag' i.tagID 1 %}">{{ i.tagName }}</a>
+            {% endfor %}
+            <br>
+
+            {% ifnotequal user.commonUserID 5 %}
+            {% if isAuthor %}
+            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID%}">Click to change</a>
+            {% endif %}
+            {% endifnotequal %}
+
+            <br>
+            <br>
+
+
+            {% for i in replySuggestionPrepageData %}
+            <div class="mdl-card__actions mdl-card--border" style="display: grid; justify-items: center;">
+                {{ i.selfSuggestion.commonUser.commonUserName }}
+                <br>
+                Post time:{{ i.selfSuggestion.postTime }}
+                <br>
+                Suggestion ID:{{ i.selfSuggestion.suggestionID }}
+                <br>
+                <p style="margin: 39px; margin-top:0; background-color:whitesmoke; padding: 10px; border-radius: 20px;
+                box-shadow: 5px 5px rgb(0,0,0,20%);">{{ i.selfSuggestion.content }}</p>
+                <a href="{% url 'USFP:userViewOneSuggestion' i.selfSuggestion.suggestionID 1 %}">Click to view</a>
+                <br>
+                <br>
+            </div>
+            {% endfor %}
+
+
+            <div>
+                {% if replySuggestionPrepageData.has_previous %}
+                <a
+                    href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID IsuggestionPrepageData.previous_page_number  %}">Last
+                    Page</a>
+                {% endif %}
+
+                {% for n in replySuggestionPageList %}
+                <a href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID n  %}">{{ n }}</a> &emsp;
+                {% endfor %}
+
+                {% if replySuggestionPrepageData.has_next %}
+                <a
+                    href="{% url 'USFP:userViewOneSuggestion' suggestion.suggestionID suggestionPrepageData.next_page_number  %}">Next
+                    Page</a>
+                {% endif %}
+
+                <br>
+            </div>
+
+
+
+
+            {% ifnotequal user.commonUserID 5 %}
+                {% if isVerified %}
+            <br>
+            <br>
+            <br>
+            <p>You can comment the suggestion here:</p>
+            <div style="display: grid; justify-items: center;"></div>
+                <form action="{% url 'USFP:userSubmitComment' suggestion.suggestionID %}" method="post">
+                    {% csrf_token %}
+                    <textarea rows="10" cols="30" name="replySuggestionContent"></textarea>
+                    <div style="display: grid; justify-items: center;">
+                        <input type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+                {% else %}
+                    <h4>You must verify to comment!</h4>
+                {% endif %}
+            {% else %}
+            <h4>You must login to comment!</h4>
+            {% endifnotequal %}
+
+            {% else %}
+            {% ifnotequal user.commonUserID 5%}
+            {% if isAuthor%}
+            <h3>It is being checked by the admin! Please wait patiently!</h3>
+            <a href="{% url 'USFP:userChangeSuggestion' suggestion.suggestionID %}">Click here to change your
+                content</a>
+            {% else %}
+            <h3>The suggestion is not available!</h3>
+            {% endif %}
+            {% else %}
+            <h3>The suggestion is not available!</h3>
+            {% endifnotequal %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+{% block script %}
+
+{% endblock %}

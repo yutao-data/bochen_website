@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是UIC同学们的小家呀！
+                大家可以在这里便捷地反馈自己的意见！
+                也可以看看最近学校的近况呢！
+            </div>
+
+            <form action="{% url 'USFP:login' 0 %}" method="post" style="display: grid; justify-items: center;">
+            {% csrf_token %}
+            <p>
+                <label class="tipText" for="userID">ID:</label><br><input type="text"
+                                                                        name="commonUserID"
+                                                                        id="commonUserID"
+                                                                        value="{{ commonUserID }}"
+                                                                        required/>
+            </p>
+            <p style="height:auto; display:inline-block">
+                <label class="tipText" for="commonUserPassword">Password:</label>
+                <input type="password" name="commonUserPassword" id="commonUserPassword" value="{{ commonUserPassword }}" required/>
+            </p>
+            <p>
+                <input type="checkbox" name="cookie" value=1>Remember the id and password(3 days)
+            </p>
+            <h3 id="errormsg"></h3>
+            <p class="mdl-card__actions mdl-card--border" style="display: grid; justify-items: center;">
+                <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Login"/>
+                &emsp;<a href="{% url 'USFP:forgetPassword' %}">Forget password</a>
+            </p>
+            <br>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+ 
+
+
+{% block script %}
+<script>
+    if({{ error|safe }}== "1")
+{
+        document.getElementById("errormsg").innerText = "ID or passsword is wrong!!!";
+}
+</script>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+<title>Change Your Information</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+{% block content %}
+
+    <div style="display: grid; justify-items: center;">
+        <form action="{% url 'USFP:adminChangeInfor' changeType_py %}" method="post" name="adminChangeForm"
+            enctype="multipart/form-data" onsubmit="return check()">
+            {% csrf_token %}
+            {% ifequal changeType_py "Email" %}
+                <h4 style="color: crimson">If you input an email that is not UIC email, you will not be an admin!!</h4>
+                Input your new email address:<input type="email" id="newEmailAdd" name="newEmailAdd" required/>
+                <br>
+                <label for="userKey">Send a check-id key to your Email address and check it:</label>
+                <input type="text" id="userKey" name="userKey" required>
+                <label id="sendKeyButton">
+                    <button onclick="sendHideEmail()">Click here to send!</button>
+                </label>
+            {% endifequal %}
+            {% ifequal changeType_py "Image" %}
+                Profile Photo:<input type="file" name="photo" id="photo" accept="image/*" required>
+            {% endifequal %}
+            {% ifequal changeType_py "Name" %}
+                new Name:<input type="text" name="newName" id="newName" maxlength="20" required>
+            {% endifequal %}
+            {% ifequal changeType_py "Password" %}
+                <label for="Password">Password:</label><input type="password" name="Password" id="Password" required>
+                <br>
+                <label for="checkPassword"> Confirm Password:</label>
+                <input type="password" name="checkPassword" id="checkPassword" required>
+                <br>
+                <label for="userKey">Send a check-id key to your Email address and check it:</label>
+                <input type="text" id="userKey" name="userKey" required>
+                <label id="sendKeyButton">
+                    <button onclick="sendHidePassword()">Click here to send!</button>
+                </label>
+            {% endifequal %}
+            <p>
+            <h3 id="errormsg"></h3>
+            </p>
+            <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Change">
+            <a href="{% url 'USFP:adminInfor' %}">Back to the Last Page</a>
+        </form>
+    </div>
+
+{% endblock %}
+ 
+
+
+{% block script %}
+<script>
+    var userKey;
+
+    function sendHidePassword() {
+        var commonUserID = {{commonUserID|safe}}
+        $.ajax({
+            type: "POST",
+            url: "/getUserKey/",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                commonUserID:commonUserID,
+            },
+            success: function (response) {
+                if (userKey == "1") {
+                    document.getElementById("errormsg").innerHTML = "Wrong ID!";
+                }else {
+                    userKey=response;
+                }
+            }
+        });
+        var sendKeyButton = document.getElementById("sendKeyButton")
+        for (let i = 0; i <= 60; i++) {
+            (function (j) {
+                    setTimeout(function () {
+                        sendKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                        if (j == 60) {
+                            sendKeyButton.innerHTML = "<button onclick='sendHidePassword()'>Click here to send!</button>"
+                        }
+                    }, 1000 * i)
+                }
+            )(i);
+        }
+    }
+
+    function sendHideEmail() {
+        var newEmailAdd = document.getElementById("newEmailAdd").value
+        $.ajax({
+            type: "POST",
+            url: '/sendCheckKey/',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                emailAdd:newEmailAdd,
+            },
+            success: function (response) {
+                if (response == "1") {
+                    document.getElementById("errormsg").innerHTML = "Invalid email address!";
+                }else {
+                    userKey=response;
+                }
+            }
+        });
+        var sendKeyButton = document.getElementById("sendKeyButton")
+        for (let i = 0; i <= 60; i++) {
+            (function (j) {
+                    setTimeout(function () {
+                        sendKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                        if (j == 60) {
+                            sendKeyButton.innerHTML = "<button onclick='sendHideEmail()'>Click here to send!</button>"
+                        }
+                    }, 1000 * i)
+                }
+            )(i);
+        }
+    }
+
+    function check() {
+        if ({{ changeType_js|safe }}=="Password")
+        {
+            var pwOne = document.forms["adminChangeForm"]["Password"].value;
+            var pwTwo = document.forms["adminChangeForm"]["checkPassword"].value;
+            if (pwOne != pwTwo) {
+                document.getElementById("errormsg").innerHTML = "Not the same password";
+                return false;
+            } else if (pwOne.length < 3) {
+                document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
+                return false;
+            }
+            if (document.getElementById("userKey").value != userKey) {
+                document.getElementById("errormsg").innerHTML = "Wrong check-key!";
+                return false;
+            }
+        }
+        if ({{ changeType_js|safe }}=="Email")
+        {
+            if (document.getElementById("userKey").value != userKey) {
+                document.getElementById("errormsg").innerHTML = "Wrong check-key!";
+                return false;
+            }
+        }
+        return true;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+<title>Register</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+{% block content %}
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是UIC同学们的小家呀！
+                大家可以在这里便捷地反馈自己的意见！
+                也可以看看最近学校的近况呢！
+            </div>
+
+        <form action="/USFP/register/" method="post" name="registForm" onsubmit="return check()" enctype="multipart/form-data"   style="display: grid; justify-items: center;">
+            {% csrf_token %}
+            <p>
+                <label for="commonUserName">Name:</label><input type="text" name="commonUserName" id="commonUserName"
+                                                                                            maxlength=20 required>
+            </p>
+            <p>
+                <label for="commonUserPassword">Password:</label><input type="password" name="commonUserPassword" id="commonUserPassword"
+                                                                                maxlength=20 required>
+            </p>
+            <p>
+                <label for="checkPassword"> Confirm Password:</label><input type="password" name="checkPassword" maxlength=20
+                                                                        id="checkPassword" required>
+            </p>
+            <p   style="display: grid; justify-items: center;">
+                <label for="commonUserEmail">Email:(If it is an uic email address, you will be seen as verified!)</label><input type="email" id="commonUserEmail" name="commonUserEmail"
+                                                                                            oninput="showWantAdmin()" required>
+                        <br>
+            </p>
+            <p  style="display: grid; justify-items: center;">
+                <label for="commonUserKey">Send a check-id key to your Email address and check it:</label>
+                <input type="text" id="commonUserKey" name="commonUserKey" required>
+                <label id="sendCuKeyButton">
+                    <button onclick="sendHideCommonUserCheck()">Click here to send!</button>
+                </label>
+            </p>
+            <p>
+                <label for="photo">Profile Photo:</label><input type="file" name="photo" id="photo"
+                                                                            accept="image/*">
+            </p>
+            <p id="chooseToBeAdmin" style="display: none">
+                <label for="wantToBeAdmin">If you want to ba an admin, please click</label>
+                <input type="radio" name="wantToBeAdmin" value="wantToBeAdmin" id="wantToBeAdmin" onclick="showHideCheckAdmin(this)">
+            </p>
+            <p id="adminCheck" style="display: none">
+                <label for="adminKey">Send a check-id key to the Email of the administrator and check it:</label>
+                <input type="text" id="adminKey" name="adminKey">
+                <label id="sendAdKeyButton">
+                    <button onclick="sendHideAdminCheck()">Click here to send!</button>
+                </label>
+            </p>
+            <p>
+                <label id="checkResult" style="color: #ea2020"></label>
+            </p>
+            <p  class="mdl-card__actions mdl-card--border"   style="display: grid; justify-items: center;">
+                <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Register">
+                &emsp;
+                <a href="/welcome/">Back to the Welcome Page</a>
+            </p>
+        </form>
+        </div>
+    </div>
+
+{% endblock %}
+ 
+
+
+{% block script %}
+<script>
+    var adminkey;
+var commonUserKey;
+
+function sendHideCommonUserCheck() {
+    var emailAdd = document.getElementById('commonUserEmail').value
+    $.ajax({
+        type: "POST",
+        url: "{%  url 'sendCheckKey'%}",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            emailAdd: emailAdd
+        },
+        success: function (response) {
+            if (response != "1") {
+                commonUserKey = response
+            } else {
+                document.getElementById("checkResult").innerHTML = "Wrong email!";
+            }
+        }
+    });
+    var sendCuKeybutton = document.getElementById("sendCuKeyButton")
+    for (let i = 0; i <= 60; i++) {
+        (function (j) {
+                setTimeout(function () {
+                    sendCuKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                    if (j == 60) {
+                        sendCuKeybutton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
+                    }
+                }, 1000 * i)
+            }
+        )(i);
+    }
+}
+
+function sendHideAdminCheck() {
+    $.ajax({
+        type: "POST",
+        url: "{%  url 'getadKey'%}",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+        success: function (response) {
+            adminkey = response
+        }
+    });
+    var sendAdKeyButton = document.getElementById("sendAdKeyButton")
+    for (let i = 0; i <= 60; i++) {
+        (function (j) {
+                setTimeout(function () {
+                    sendAdKeyButton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                    if (j == 60) {
+                        sendAdKeyButton.innerHTML = "<button onclick='sendHideAdCheck()'>Click here to send!</button>"
+                    }
+                }, 1000 * i)
+            }
+        )(i);
+    }
+}
+
+function check() {
+    var pwOne = document.getElementById("commonUserPassword").value;
+    var pwTwo = document.getElementById("checkPassword").value;
+    if (pwOne !== pwTwo) {
+        document.getElementById("checkResult").innerHTML = "Not the same password";
+        return false;
+    } else if (pwOne.length < 3) {
+        document.getElementById("checkResult").innerHTML = "The length of the password must be larger than three!";
+        return false;
+    }
+    if (document.getElementById("wantToBeAdmin").checked) {
+        if (document.getElementById("adminKey").value !== adminkey) {
+            document.getElementById("checkResult").innerHTML = "Wrong check-key!";
+            return false;
+        }
+    }
+    if (document.getElementById("commonUserKey").value !== commonUserKey) {
+            document.getElementById("checkResult").innerHTML = "Wrong check-key!";
+            return false;
+    }
+    return true;
+}
+
+function showWantAdmin() {
+    if (document.getElementById('commonUserEmail').value.endsWith('@mail.uic.edu.cn')) {
+        document.getElementById('chooseToBeAdmin').style.display = 'block'
+    } else {
+        document.getElementById('chooseToBeAdmin').style.display = 'None'
+    }
+}
+
+function showHideCheckAdmin(element) {
+    var radio = $(element);
+    if (radio.data('waschecked')) {
+        radio.prop('checked', false);
+        radio.data('waschecked', false)
+        document.getElementById('adminCheck').style.display = 'None'
+        $('#adminKey').attr("required", false)
+    } else {
+        radio.prop('checked', true);
+        radio.data('waschecked', true)
+        document.getElementById('adminCheck').style.display = 'block'
+        $('#adminKey').attr("required", true)
+    }
+}
+</script>
+{% endblock %}

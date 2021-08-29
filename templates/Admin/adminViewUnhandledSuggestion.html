@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+<meta charset="UTF-8">
+<title>View Unhandled Suggestions</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+
+{% block content %}
+    <div style="display: grid; justify-items: center;">
+        <h3>Here are the suggestions that are unhandled(invisible)</h3>
+        <table border="1" cellspacing="0">
+            <tr>
+                <th>
+                    Count
+                </th>
+                <th>
+                    Suggestion ID
+                </th>
+                <th>
+                    PostTime
+                </th>
+                <th>
+                    Last Modify
+                </th>
+                <th>
+                    View
+                </th>
+            </tr>
+            {% for i in suggestionPrepageData %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ i.suggestionID }}
+                    </td>
+                    <td>
+                        {{ i.postTime }}
+                    </td>
+                    <td>
+                        {{ i.modifyTime }}
+                    </td>
+                    <td>
+                        <a href="{% url 'USFP:adminViewOneSuggestion' i.suggestionID 1%}">View the suggestion</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+                <div>
+                {% if suggestionPrepageData.has_previous %}
+                <a
+                    href="{% url 'USFP:adminViewUnhandledSuggestion' suggestionPrepageData.previous_page_number  %}">Last
+                    Page</a>
+                {% endif %}
+
+                {% for n in suggestionPageList %}
+                <a href="{% url 'USFP:adminViewUnhandledSuggestion'  n  %}">{{ n }}</a> &emsp;
+                {% endfor %}
+
+                {% if suggestionPrepageData.has_next %}
+                <a
+                    href="{% url 'USFP:adminViewUnhandledSuggestion' suggestionPrepageData.next_page_number  %}">Next
+                    Page</a>
+                {% endif %}
+
+                <br>
+            </div>
+        <a href="{% url 'USFP:adminInfor' %}">Back</a>
+    </div>
+{% endblock %}
+ 
+
+
+{% block script %}
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+<title>Forget Password</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+{% block content %}
+
+    <div class="demo-container mdl-grid">
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Welcome</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                这里是UIC同学们的小家呀！
+                大家可以在这里便捷地反馈自己的意见！
+                也可以看看最近学校的近况呢！
+            </div>
+
+            <form action="{% url 'USFP:forgetPassword' %}" method="post" name="forPassForm" onsubmit="return check()" style="display: grid; justify-items: center;">
+                {% csrf_token %}
+                <p>
+                    <label class="tipText" for="commonUserID">ID:</label>
+                    <input type="text" name="commonUserID" id="commonUserID"/>
+                </p>
+            
+                <p>
+                    <label for="pwd">Password:</label><input type="password" name="commonUserPassword"
+                                                                                     id="commonUserPassword" required>
+                </p>
+                <p>
+                    <label for="checkPassword"> Confirm Password:</label><input type="password" name="checkPassword" id="checkPassword"
+                                                                           required>
+                </p>
+                <p style="display: grid; justify-items: center;">
+                    <label for="userKey">Send a check-id key to your Email address and check it:</label>
+                    <input type="text" id="userKey" name="userKey" required>
+                    <label id="sendKeybutton">
+                        <button onclick="sendHide()">Click here to send!</button>
+                    </label>
+                </p>
+                <p>
+                <h3 id="errormsg"></h3>
+                </p>
+                <p  class="mdl-card__actions mdl-card--border" style="display: grid; justify-items: center;">
+                <label>&emsp;&emsp;&emsp;</label><input type="submit" value="Change">
+                </p>
+                &emsp;
+                <a href="/welcome/">Back to the Welcome Page</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+ 
+
+
+{% block script %}
+<script>
+    var userKey;
+
+    function sendHide() {
+        var commonUserID = document.getElementById("commonUserID").value
+        $.ajax({
+            type: "POST",
+            url: "/getUserKey/",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                commonUserID: commonUserID
+            },
+            success: function (response) {
+                userKey = response
+            }
+        });
+        if (userKey == 1) {
+            document.getElementById("errormsg").innerHTML = "Wrong ID!";
+        }
+        var sendKeybutton = document.getElementById("sendKeybutton")
+        for (let i = 0; i <= 60; i++) {
+            (function (j) {
+                    setTimeout(function () {
+                        sendKeybutton.innerHTML = "<label>You can try again after " + (60 - j) + " seconds!</label>"
+                        if (j == 60) {
+                            sendKeybutton.innerHTML = "<button onclick='sendHide()'>Click here to send!</button>"
+                        }
+                    }, 1000 * i)
+                }
+            )(i);
+        }
+    }
+
+    function check() {
+        var pwOne = document.forms["forPassForm"]["commonUserPassword"].value;
+        var pwTwo = document.forms["forPassForm"]["checkPassword"].value;
+        if (pwOne != pwTwo) {
+            document.getElementById("errormsg").innerHTML = "Not the same password";
+            return false;
+        } else if (pwOne.length < 3) {
+            document.getElementById("errormsg").innerHTML = "The length of the password must be larger than three!";
+            return false;
+        }
+        if (document.getElementById("userKey").value != userKey) {
+            document.getElementById("errormsg").innerHTML = "Wrong check-key!";
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}
