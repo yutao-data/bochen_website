@@ -377,7 +377,7 @@ section {
   height: 0;
   top: 50%;
   left: 50%;
-  background: #dd4142;
+  background: #cfa972;
   opacity: 0;
   transform: translateX(-50%) translateY(-50%) rotate(90deg);
   content: '';
@@ -418,7 +418,7 @@ section {
   transition-duration: 0.3s;
   background: transparent;
   border-radius: 5px;
-  border: 1px solid #dd4142;
+  border: 1px solid #cfa972;
 }
 
 .owl-prev,
@@ -521,8 +521,9 @@ section {
 .header_btn .more-link {
   padding: 14px 29px 14px 29px;
   background: transparent;
-  border: 1px solid #dd4142;
+  border: 1px solid #cfa972;
 }
+
 
 .menu_wrapper nav {
   position: relative;
@@ -956,7 +957,8 @@ nav .menu_content .links {
 
 .hero-section {
   background: #121318;
-  background: url("../images/banner1.jpg");
+  background: url("../images/ourImage/1_modify.png");
+  width:100%;
   padding-bottom: 8px;
   padding-top: 85px;
   height: 800px;
