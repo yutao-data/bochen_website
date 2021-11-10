@@ -303,13 +303,26 @@ section {
   color: #fff;
   margin-top: 0px;
 }
-
+/* 
 .base-header h3::after {
   position: absolute;
   content: "";
   width: 70px;
   height: 2px;
   background: #dd4142;
+  opacity: .7;
+  left: 50%;
+  bottom: -25px;
+  transform: translateX(-50%);
+} */
+
+
+.base-header h3::after {
+  position: absolute;
+  content: "";
+  width: 70px;
+  height: 2px;
+  background: #cfa972;
   opacity: .7;
   left: 50%;
   bottom: -25px;
@@ -958,6 +971,34 @@ nav .menu_content .links {
 .hero-section {
   background: #121318;
   background: url("../images/ourImage/1_modify.png");
+  width:100%;
+  padding-bottom: 8px;
+  padding-top: 85px;
+  height: 800px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.hero-section-2 {
+  background: #121318;
+  background: url("../images/ourImage/2.png");
+  width:100%;
+  padding-bottom: 8px;
+  padding-top: 85px;
+  height: 800px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.hero-section-3 {
+  background: #121318;
+  background: url("../images/ourImage/3.png");
   width:100%;
   padding-bottom: 8px;
   padding-top: 85px;
@@ -1710,9 +1751,14 @@ a .discover_title:hover {
   margin-right: 282px;
   bottom: 11px;
 }
-
+/* 
 .owl-dots .owl-dot.active span {
   background: #dd4142;
+  width: 25px;
+} */
+
+.owl-dots .owl-dot.active span {
+  background: #cfa972;
   width: 25px;
 }
 
@@ -1893,11 +1939,28 @@ footer ul li {
   background-attachment: fixed;
 }
 
-.workflow_item i {
+
+/* Before edit workflow 
+
+  .workflow_item i {
   font-size: 32px;
   width: 74px;
   height: 68px;
   background: #dd4142;
+  color: #fff;
+  text-align: center;
+  line-height: 68px;
+  border-radius: 8px;
+  box-shadow: 5px 6px 20px 0px rgba(51, 44, 44, 0.42);
+  transition: .4s;
+
+} */
+
+.workflow_item i {
+  font-size: 32px;
+  width: 74px;
+  height: 68px;
+  background: #cfa972;
   color: #fff;
   text-align: center;
   line-height: 68px;
@@ -1943,8 +2006,18 @@ footer ul li {
   position: relative;
 }
 
-.footer-section h5:after {
+/* .footer-section h5:after {
   background: #dd4142;
+  position: absolute;
+  content: "";
+  width: 50px;
+  height: 2px;
+  left: 0px;
+  bottom: 5px;
+} */
+
+.footer-section h5:after {
+  background: #cfa972;
   position: absolute;
   content: "";
   width: 50px;
