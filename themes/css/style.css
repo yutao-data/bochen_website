@@ -70,7 +70,7 @@ body {
 }
 
 img {
-  max-width: 100%;
+  max-width: 85%;
 }
 
 
@@ -541,7 +541,7 @@ section {
 .menu_wrapper nav {
   position: relative;
   display: flex;
-  max-width: 1172px;
+  max-width: 1272px;
   margin: 0 auto;
   height: 70px;
   align-items: center;
@@ -901,7 +901,7 @@ nav .menu_content .links {
 
 @media (min-width:1200px) {
   .menu_wrapper nav {
-    max-width: 1170px;
+    max-width: 1270px;
   }
 }
 
@@ -1287,6 +1287,7 @@ nav .menu_content .links {
 .about_text p {
   margin-bottom: 35px;
   line-height: 27px;
+  text-align:justify;
 }
 
 .about-section .col-md-6 {
@@ -1603,6 +1604,7 @@ nav .menu_content .links {
   letter-spacing: .2px;
   margin-bottom: 16px;
   color: #fff;
+  text-align:justify;
 }
 
 a .discover_title:hover {
