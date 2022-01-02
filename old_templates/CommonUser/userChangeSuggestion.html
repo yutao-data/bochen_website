@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+<title>Change Your Suggestion</title>
+<base href="/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+
+{% block content %}
+
+<div class="demo-container mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp " style="width: max-content; margin: auto;">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">change suggestion</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            {% ifnotequal user.commonUserID 5%}
+            <p>这里用来修改你已经提出的建议的地方！迫不及待看到你的新建议呢！</p>
+            {% endifnotequal %}
+        </div>
+        <div style="display: grid; justify-items: center;">
+            <form action="{% url 'USFP:userChangeSuggestion' suggestionID%}" method="post">
+                {% csrf_token %}
+                Type your new suggestion here:
+                <br>
+                <textarea rows="10" cols="30" name="newSuggestionContent" required></textarea>
+                <br>
+                <div  style="display: grid; justify-items: center;">
+                    <input type="submit" value="Click to submit">
+                </div>
+            </form>
+            <a href="{%  url 'USFP:userViewOneSuggestion' suggestionID 1%}">View the Suggestion</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+{% block script %}
+
+{% endblock %}

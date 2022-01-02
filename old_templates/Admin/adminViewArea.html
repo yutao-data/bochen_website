@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+<title>View The Users Of The Area</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+{% block content %}
+
+<div style="display: grid; justify-items: center;">
+    <h1>For the area:{{ areaName }}</h1>
+    <button onclick="showChoose()" id="tochooseButton">Click to choose</button>
+    <button onclick="allChoose()" class="ChooseFunction" style="display: none">Select all</button>
+    <button onclick="toDelete()" class="ChooseFunction" style="display: none">Delete</button>
+    <button onclick="cancelDelete()" class="ChooseFunction" style="display: none">Cancel</button>
+    <table border="1" cellspacing="0">
+        <tr>
+            <th>
+                Count
+            </th>
+            <th>
+                User id
+            </th>
+            <th>
+                User name
+            </th>
+            <th>
+                User profile
+            </th>
+            <th>
+                View
+            </th>
+            <th class="ChooseFunction" style="display: none">
+                To choose
+            </th>
+        </tr>
+        {% for i in prepageData %}
+        <tr>
+            <td>
+                {{ forloop.counter }}
+            </td>
+            <td>
+                {{ i.commonUserID }}
+            </td>
+            <td>
+                {{ i.commonUserName }}
+            </td>
+            <td>
+                <img src="/media/{{ i.commonUserImage }}">
+            </td>
+            <td>
+                <a href="{% url 'USFP:adminViewUser' i.commonUserID %}">View the user</a>
+            </td>
+            <td class="ChooseFunction" style="display: none">
+                <input type="checkbox" class="ChooseFunction" value={{ i.commonUserID }} onclick="onechoose(this)">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div>
+        <br>
+        {% if prepageData.has_previous %}
+        <a href="{% url 'USFP:adminViewArea' prepageData.previous_page_number areaID %}">Last Page</a>
+        {% endif %}&emsp;
+        {% for n in pageList %}
+        <a href="{% url 'USFP:adminViewArea' n areaID %}">{{ n }}</a> &emsp;
+        {% endfor %}
+        {% if prepageData.has_next %}
+        <a href="{% url 'USFP:adminViewArea' prepageData.next_page_number areaID %}">Next Page</a>
+        {% endif %}
+    </div>
+    <div>
+        <a href="{% url 'USFP:adminInfor' %}">Back to adminInfor</a>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+<script>
+    var nodeList = document.getElementsByClassName("ChooseFunction");
+    var listToDelete = "";
+
+    function showChoose() {
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].style.display = "block";
+        }
+        document.getElementById("toChooseButton").style.display = "none";
+    }
+
+    function toDelete() {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'USFP:adminDeleteUsers' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                listToDelete: listToDelete,
+            },
+            success: function (response) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function cancelDelete() {
+        for (var i = 0; i < nodeList.length; i++) {
+            nodeList[i].style.display = "none";
+            nodeList[i].checked = false;
+        }
+        listToDelete = "";
+        document.getElementById("toChooseButton").style.display = "block";
+    }
+
+    function allChoose() {
+        listToDelete = "";
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].checked = true;
+            if (nodeList[i].value !== undefined && !isNaN(nodeList[i].value)) {
+                listToDelete += nodeList[i].value + "-";
+            }
+        }
+    }
+
+    function onechoose(element) {
+        if (element.checked) {
+            listToDelete += element.value + "-";
+        } else {
+            element.checked = false;
+            listToDelete = listToDelete.replace(toString(element.value), "");
+        }
+    }
+</script>
+{% endblock %}

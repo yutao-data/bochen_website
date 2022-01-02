@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+<title>View Your Delete Operations</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<script src="/static/JavaScript/jquery-3.4.1.min.js"></script>
+
+
+
+{% block content %}
+
+    <div style="display: grid; justify-items: center;">
+        <button onclick="showChoose()" >Click to choose</button>
+        <button onclick="getThemBack()" class="ChooseFunction" style="display: none">Get them back</button>
+        <button onclick="cancelDelete()" class="ChooseFunction" style="display: none">Cancel</button>
+        
+        <button onclick="allAreaChoose()" class="ChooseFunction" style="display: none">Select all areas</button>
+        <h3>Which area you have deleted recently:</h3>
+        <table border="1" cellspacing="0">
+            <tr>
+                <th>
+                    Count
+                </th>
+                <th>
+                    Operation Type
+                </th>
+                <th>
+                    The Name Of The Area
+                </th>
+                <th>
+                    Datetime
+                </th>
+                <th class="ChooseFunction" style="display: none">
+                    To choose
+                </th>
+            </tr>
+            {% for i in areaPrepageData %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ i.operationType }}
+                    </td>
+                    <td>
+                        {{ i.area.areaName }}
+                    </td>
+                    <td>
+                        {{ i.operationTakeDate }}
+                    </td>
+                    <td class="ChooseFunction" style="display: none">
+                        <input type="checkbox" class="ChooseAreaFunction" value={{ i.areaOperationID }} onclick="areaChoose(this)">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        {% if areaPrepageData.has_previous %}
+            <a href="{% url 'USFP:adminViewDeletions' areaPrepageData.previous_page_number userDeletionNum suggestionDeletionNum%}">Last Page</a>
+        {% endif %}&emsp;
+        {% for n in  areaPageList %}
+            <a href="{% url 'USFP:adminViewDeletions' n userDeletionNum suggestionDeletionNum%}">{{ n }}</a> &emsp;
+        {% endfor %}
+        {% if areaPrepageData.has_next %}
+            <a href="{% url 'USFP:adminViewDeletions' areaPrepageData.next_page_number userDeletionNum suggestionDeletionNum%}">Next Page</a>
+        {% endif %}&emsp;
+        
+        <br>
+        <button onclick="allUserChoose()" class="ChooseFunction" style="display: none">Select all users</button>
+        <h3>Which user yout have deleted recently:</h3>
+        <table border="1" cellspacing="0">
+            <tr>
+                <th>
+                    Count
+                </th>
+                <th>
+                    Operation Type
+                </th>
+                <th>
+                    The ID of the User
+                </th>
+                <th>
+                    Datetime
+                </th>
+                <th class="ChooseFunction" style="display: none">
+                    To choose
+                </th>
+            </tr>
+            {% for i in userPrepageData %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ i.operationType }}
+                    </td>
+                    <td>
+                        {{ i.commonUser.commonUserID }}
+                    </td>
+                    <td>
+                        {{ i.operationTakeDate }}
+                    </td>
+                    <td class="ChooseFunction" style="display: none">
+                        <input type="checkbox" class="ChooseUserFunction" value={{ i.commonUserOperationID }} onclick="userChoose(this)">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        {% if userPrepageData.has_previous %}
+            <a href="{% url 'USFP:adminViewDeletions' areaDeletionNum userPrepageData.previous_page_number suggestionDeletionNum%}">Last Page</a>
+        {% endif %}&emsp;
+        {% for n in  userPageList %}
+            <a href="{% url 'USFP:adminViewDeletions' areaDeletionNum n suggestionDeletionNum%}">{{ n }}</a> &emsp;
+        {% endfor %}
+        {% if userPrepageData.has_next %}
+            <a href="{% url 'USFP:adminViewDeletions' areaDeletionNum userPrepageData.next_page_number suggestionDeletionNum%}">Next Page</a>
+        {% endif %}&emsp;
+        
+        <br>
+        <button onclick="allSuggestionChoose()" class="ChooseFunction" style="display: none">Select all suggestions</button>
+        <h3>Which suggestion you have deleted recently:</h3>
+        <table border="1" cellspacing="0">
+            <tr>
+                <th>
+                    Count
+                </th>
+                <th>
+                    Operation Type
+                </th>
+                <th>
+                    The ID of the Suggestion
+                </th>
+                <th>
+                    Datetime
+                </th>
+                <th class="ChooseFunction" style="display: none">
+                    To choose
+                </th>
+            </tr>
+            {% for i in suggestionPrepageData %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ i.operationType }}
+                    </td>
+                    <td>
+                        {{ i.suggestion.suggestionID }}
+                    </td>
+                    <td>
+                        {{ i.operationTakeDate }}
+                    </td>
+                    <td class="ChooseFunction" style="display: none">
+                        <input type="checkbox" class="ChooseSuggestionFunction" value={{ i.suggestionOperationID }} onclick="suggestionChoose(this)">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        {% if suggestionPrepageData.has_previous %}
+            <a href="{% url 'USFP:adminViewDeletions' areaDeletionNum userDeletionNum suggestionPrepageData.previous_page_number %}">Last Page</a>
+        {% endif %}&emsp;
+        {% for n in  suggestionPageList %}
+            <a href="{% url 'USFP:adminViewDeletions' areaDeletionNum  userDeletionNum n %}">{{ n }}</a> &emsp;
+        {% endfor %}
+        {% if suggestionPrepageData.has_next %}
+            <a href="{% url 'USFP:adminViewDeletions' areaDeletionNum userDeletionNum suggestionPrepageData.next_page_number %}">Next Page</a>
+        {% endif %}&emsp;
+        <br>
+        <a href="{% url 'USFP:adminInfor' %}">Back to your personal inforamtion</a>&emsp;
+        <a href="{% url 'USFP:adminViewOperations' 1 1 1%}">Back to your operation history</a>
+    </div>
+
+
+{% endblock %}
+ 
+
+
+{% block script %}
+<script>
+    var nodeList = document.getElementsByClassName("ChooseFunction");
+    var areaNodeList = document.getElementsByClassName("ChooseAreaFunction");
+    var userNodeList = document.getElementsByClassName("ChooseUserFunction");
+    var suggestionNodeList = document.getElementsByClassName("ChooseSuggestionFunction");
+    var areaOperationList = "";
+    var userOperationList = "";
+    var suggestionOperationList="";
+
+    function showChoose() {
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].style.display = "block";
+        }
+        for (let i = 0; i < areaNodeList.length; i++) {
+            areaNodeList[i].style.display = "block";
+        }
+        for (let i = 0; i < userNodeList.length; i++) {
+            areaNodeList[i].style.display = "block";
+        }
+        for (let i = 0; i < suggestionNodeList.length; i++) {
+            suggestionNodeList[i].style.display = "block";
+        }
+        document.getElementById("toChooseButton").style.display = "none";
+    }
+
+    function getThemBack() {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'USFP:adminAnnulDeletions' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                areaOperationList:areaOperationList,
+                userOperationList:userOperationList,
+                suggestionOperationList:suggestionOperationList,
+            },
+            success: function (response) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function cancelDelete() {
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].style.display = "none";
+        }
+        for (let i = 0; i < areaNodeList.length; i++) {
+            areaNodeList[i].style.display = "none";
+            areaNodeList[i].checked = fasle;
+        }
+        areaOperationList="";
+        for (let i = 0; i < userNodeList.length; i++) {
+            userNodeList[i].style.display = "none";
+            userNodeList[i].checked=false
+        }
+        userOperationList="";
+        for (let i = 0; i < suggestionNodeList.length; i++) {
+            suggestionNodeList[i].style.display = "none";
+            suggestionNodeList[i].checked=false;
+        }
+        suggestionOperationList="";
+        document.getElementById("toChooseButton").style.display = "block";
+    }
+
+    function allAreaChoose() {
+        areaOperationList = "";
+        for (let i = 0; i < areaNodeList.length; i++) {
+            areaNodeList[i].checked = true;
+            areaOperationList += areaNodeList[i].value+"-";
+        }
+    }
+
+    function allUserChoose() {
+        userOperationList = "";
+        for (let i = 0; i < userNodeList.length; i++) {
+            userNodeList[i].checked = true;
+            userOperationList += userNodeList[i].value+"-";
+        }
+    }
+
+    function allSuggestionChoose() {
+        suggestionOperationList = "";
+        for (let i = 0; i < suggestionNodeList.length; i++) {
+            suggestionNodeList[i].checked = true;
+            suggestionOperationList += suggestionNodeList[i].value+"-";
+        }
+    }
+
+    function areaChoose(element) {
+        if (element.checked) {
+            areaOperationList += element.value + "-";
+        } else {
+            element.checked = false;
+            areaOperationList = areaOperationList.replace(toString(element.value), "");
+        }
+    }
+
+    function suggestionChoose(element) {
+        if (element.checked) {
+            suggestionOperationList += element.value + "-";
+        } else {
+            element.checked = false;
+            suggestionOperationList = suggestionOperationList.replace(toString(element.value), "");
+        }
+    }
+
+    function userChoose(element) {
+        if (element.checked) {
+            userOperationList += element.value + "-";
+        } else {
+            element.checked = false;
+            userOperationList = userOperationList.replace(toString(element.value), "");
+        }
+    }
+
+</script>
+{% endblock %}
