@@ -1,0 +1,7 @@
+{
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "files.insertFinalNewline": true,
+    "editor.renderFinalNewline": false,
+    "files.eol": "\n"
+}
